@@ -1,0 +1,37 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/cart.css">
+    </head>
+
+    <body>
+        <%- include('../includes/navigation.ejs') %>
+        <main class="main-cart-page">
+            <div class="left-sidebar">
+            <% if (products && products.length > 0) { %>
+                <% products.forEach(function(item) { %>
+                    <div class="cart-card">
+                        <div class="cart-image">
+                            <img src="<%= item.imgUrl %>" alt="<%= item.name %>" />
+                        </div>
+                        <div class="cart-info">
+                            <div class="product-title"><%= item.name %></div>
+                            <div class="product-subtitle">Quantity: <%= item.quantity %></div>
+                            <div class="out-of-stock">Price: $<%= item.price %></div>
+                            <div class="cart-actions">
+                                <a href="/cart/Whishlist/<%= item.productId %>">Move to whishlist</a>
+                                <a href="/cart/delete/<%= item.productId %>">REMOVE</a>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <h1>No Products in Cart!</h1>
+            <% } %>
+            <div>
+                <button class="place-order"><a href="/create-order">Place Order</a></button>
+            </div>
+        </div>
+        <div class="right-sidebar">
+            
+        </div>
+        </main>
+        <%- include('../includes/end.ejs') %>
