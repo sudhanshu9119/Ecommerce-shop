@@ -1,4 +1,5 @@
 const path = require('path');
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -40,7 +41,7 @@ app.use(session({
   cookie: {
     secure: false, // ✅ true in production (with HTTPS)
     httpOnly: true,
-    maxAge: 1000 * 60 * 60 // 1 hour
+    // session cookie: no maxAge or expires
   }
 }));
 
