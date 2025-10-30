@@ -1,6 +1,27 @@
 const userModel = require('../models/user')
 const bcrypt = require('bcrypt');
+// const nodemailer = require('nodemailer');
+// const nodemailerSendgrid = require('nodemailer-sendgrid');
+  const nodemailer = require('nodemailer');
+const MailgunTransport = require('nodemailer-mailgun-transport');
 
+
+
+// const transportor = nodemailer.createTransport(
+//     nodemailerSendgrid({
+//         apiKey: apiKey   
+//     })
+// );
+
+console.log("mail gun api key loading from env", process.env.MAILGUN_API_KEY);
+console.log("maigun domian",process.env.MAILGUN_DOMAIN)
+
+  let transporter = nodemailer.createTransport(MailgunTransport({
+    auth: {
+      domain: process.env.MAILGUN_DOMAIN,
+      apiKey: process.env.MAILGUN_API_KEY
+    }
+  }));
 
 module.exports.getLogin = (req, res, next) => {
     res.render('../views/auth/login.ejs', {
@@ -66,6 +87,7 @@ module.exports.postLogin = (req, res, next) => {
       const existingUser = await userModel.findOne({ email: email });
   
       if (existingUser) {
+        console.log("This user is already exist");
         return res.redirect('/login'); 
       }
       const hashedPassword = await bcrypt.hash(password, 12);
@@ -75,6 +97,19 @@ module.exports.postLogin = (req, res, next) => {
       });
   
       await newUser.save();
+     try {
+       await transporter.sendMail({
+         from: process.env.MAILGUN_FROM || 'no-reply@example.com',
+         to: email,
+         subject: 'Welcome to Our App!',
+         text: `Hello ${email}, welcome to our platform!`,
+         html: `<h3>Welcome, ${email}!</h3><p>Thank you for signing up.</p>`
+       }).then((status)=>{
+        console.log(`email has been sent successfully to ${email}`);
+       })
+     } catch (mailErr) {
+       console.error('SendGrid mail error:', mailErr && mailErr.response && mailErr.response.body ? mailErr.response.body : mailErr);
+     }
   
       return res.redirect('/login');
     } catch (error) {

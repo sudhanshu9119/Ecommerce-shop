@@ -1,40 +1,72 @@
 <%- include('../includes/head.ejs') %>
     <link rel="stylesheet" href="/css/product.css">
-    </head>
+    
+<script>
+  window.dataLayer = window.dataLayer || [];
+</script>
 
-    <body>
-        <%- include('../includes/navigation.ejs') %>
+</head>
 
-            <main>
-                <% if (prods.length > 0) { %>
-                    <div class="grid">
-                        <% for (let product of prods) { %>
-                            <article class="card product-item">
-                                <header class="card__header">
-                                    <h1 class="product__title">
-                                        <%= product.title %>
-                                    </h1>
-                                </header>
-                                <div class="card__image">
-                                    <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
-                                </div>
-                                <div class="card__content">
-                                    <h2 class="product__price">$
-                                        <%= product.price %>
-                                    </h2>
-                                    <p class="product__description">
-                                        <%= product.description %>
-                                    </p>
-                                </div>
-                                <div class="card__actions">
-                                    <a href="/products/<%= product._id %>" class="btn">Details</a>
-                                    <%- include('../includes/add-to-cart.ejs', {product: product}) %>
-                                </div>
-                            </article>
-                            <% } %>
-                    </div>
-                    <% } else { %>
-                        <h1>No Products Found!</h1>
-                        <% } %>
-            </main>
-            <%- include('../includes/end.ejs') %>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PTZV6D2J"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+    <%- include('../includes/navigation.ejs') %>
+    
+
+    <main>
+        <% if (prods.length > 0) { %>
+            <div class="grid">
+                <% for (let product of prods) { %>
+                    <article class="card product-item">
+                        <header class="card__header">
+                            <h1 class="product__title">
+                                <%= product.title %>
+                            </h1>
+                        </header>
+                        <div class="card__image">
+                            <img src="<%= product.imageUrl %>" alt="<%= product.title %>">
+                        </div>
+                        <div class="card__content">
+                            <h2 class="product__price">$
+                                <%= product.price %>
+                            </h2>
+                            <p class="product__description">
+                                <%= product.description %>
+                            </p>
+                        </div>
+                        <div class="card__actions">
+                            <a href="/products/<%= product._id %>" class="btn">Details</a>
+                            <%- include('../includes/add-to-cart.ejs', {product: product}) %>
+                        </div>
+                    </article>
+                <% } %>
+            </div>
+        <% } else { %>
+            <h1>No Products Found!</h1>
+        <% } %>
+    </main>
+
+    <%
+      const productsForDataLayer = prods.map((product, index) => ({
+        'item_name': product.title,
+        'item_id': product._id,
+        'price': product.price,
+        'item_brand': 'Your Brand Name', // Replace with your brand
+        'item_category': 'Your Category', // Replace with a dynamic category
+        'index': index + 1,
+      }));
+    %>
+    <script>
+      window.dataLayer.push({
+        'event': 'view_item_list',
+        'ecommerce': {
+          'items': <%- JSON.stringify(productsForDataLayer) %>
+        }
+      });
+      console.log('Current Data Layer:', window.dataLayer);
+    </script>
+
+    <%- include('../includes/end.ejs') %>
