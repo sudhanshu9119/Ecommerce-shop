@@ -8,6 +8,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcrypt');
 const nodeMailer = require('nodemailer');
+const cors = require('cors');
 
 const errorController = require('./controllers/error');
 const User = require('./models/user');
@@ -16,6 +17,9 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
+
+const auraAuth = require("./routes/aura/authentication")
+const mediaRoutes = require('./routes/aura/mediaRoutes')
 
 const app = express();
 
@@ -28,6 +32,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
+app.use(cors());
+
 
 // ✅ Setup session middleware BEFORE routes
 app.use(session({
@@ -35,17 +41,16 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: 'mongodb+srv://stiwari9598:nahipata@cluster0.miool.mongodb.net/EcommerceApp?authSource=admin&replicaSet=atlas-80mh0h-shard-0',
-    collectionName: 'sessions' // consistent naming
+    mongoUrl: process.env.MONGO_URI,
+    collectionName: 'sessions' 
   }),
   cookie: {
-    secure: false, // ✅ true in production (with HTTPS)
+    secure: false, 
     httpOnly: true,
-    // session cookie: no maxAge or expires
   }
 }));
 
-// Load user from DB if needed (optional helper)
+
 app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
@@ -67,13 +72,15 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(userRoutes);
 app.use(authRoutes);
+app.use('/aura',auraAuth);
+app.use('/aura', mediaRoutes)
 
 // Error handler last
 app.use(errorController.get404);
 
 // Connect to MongoDB and start server
 mongoose.connect(
-  'mongodb+srv://stiwari9598:nahipata@cluster0.miool.mongodb.net/EcommerceApp?authSource=admin&replicaSet=atlas-80mh0h-shard-0',
+  process.env.MONGO_URI,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -85,8 +92,8 @@ mongoose.connect(
   }
 )
 .then(() => {
-  app.listen(3000, () => {
-    console.log("✅ Server is running on http://localhost:3000");
+  app.listen(process.env.port, () => {
+    console.log(`✅ Server is running on ${process.env.port} `);
   });
 })
 .catch(err => {
