@@ -21,8 +21,15 @@ const authUserSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
+  
+ avatar: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "thumbnails.files", 
+  default: null
+}
 
-}, { timestamps: true });
+}, 
+{ timestamps: true });
 
 const AuthUser = mongoose.model('AuthUser', authUserSchema);
 

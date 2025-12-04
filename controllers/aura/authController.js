@@ -13,8 +13,6 @@ const transportor = nodemailer.createTransport(
 
 module.exports.postSignUp = async (req, res) => {
 
-  console.log("from aura auth fired");
-
   try {
     const { username, email, password } = req.body;
 
@@ -25,7 +23,7 @@ module.exports.postSignUp = async (req, res) => {
       });
     }
 
-    // Check if user already exists
+  
     const existingUser = await AuthUser.findOne({ email });
     if (existingUser) {
       return res.status(409).json({ 
@@ -79,52 +77,6 @@ module.exports.postSignUp = async (req, res) => {
 };
 
 
-
-// module.exports.postSignIn = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-
-//     // Basic validation
-//     if (!email || !password) {
-//       return res.status(400).json({
-//         message: "Email and password are required."
-//       });
-//     }
-
-//     // Check if user exists
-//     const existingUser = await AuthUser.findOne({ email });
-//     if (!existingUser) {
-//       return res.status(404).json({
-//         message: "User not found, please sign up."
-//       });
-//     }
-
-//     // Compare password
-//     const isMatch = await bcrypt.compare(password, existingUser.password);
-//     if (!isMatch) {
-//       return res.status(401).json({
-//         message: "Invalid password."
-//       });
-//     }
-
-//     // Success
-//     return res.status(200).json({
-//       message: "Login successful!",
-//       user: {
-//         id: existingUser._id,
-//         username: existingUser.username,
-//         email: existingUser.email
-//       }
-//     });
-
-//   } catch (error) {
-//     return res.status(500).json({
-//       message: "Internal Server Error"
-//     });
-//   }
-// };
-
-
 module.exports.postSignIn = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -143,7 +95,6 @@ module.exports.postSignIn = async (req, res) => {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    // ➕ Store user in session
     req.session.user = {
       id: existingUser._id,
       username: existingUser.username,
@@ -170,3 +121,36 @@ module.exports.getLoggedInData = (req, res) => {
     user: req.session.user
   });
 }
+
+
+// module.exports.updateAvatar = async (req, res) => {
+//   try {
+//     if (!req.session.user) {
+//       return res.status(401).json({ message: "Not logged in" });
+//     }
+
+//     if (!req.file) {
+//       return res.status(400).json({ message: "Avatar image required" });
+//     }
+
+//     const userId = req.session.user.id;
+//     const avatarId = req.file.id;
+
+//     const updatedUser = await AuthUser.findByIdAndUpdate(
+//       userId,
+//       { avatar: avatarId },
+//       { new: true }
+//     );
+
+//     req.session.user.avatar = avatarId;
+
+//     res.status(200).json({
+//       message: "Avatar updated successfully",
+//       user: updatedUser
+//     });
+
+//   } catch (error) {
+//     console.error("Avatar Update Error:", error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
