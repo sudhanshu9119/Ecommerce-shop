@@ -2,7 +2,7 @@ const AuraPost = require("../../models/aura/AuraPostModal");
 
 exports.getFeed = async (req, res, next) => {
   const posts = await AuraPost.find()
-    .populate("user", "username email")
+    .populate("user", "username email, avatar ")
     .sort({ createdAt: -1 });
 
   const result = posts.map(p => ({

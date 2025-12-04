@@ -6,7 +6,6 @@ const AuraPostSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
 
-  // GridFS file IDs
   videoId: { type: mongoose.Schema.Types.ObjectId, required: true },
   thumbnailId: { type: mongoose.Schema.Types.ObjectId, required: true },
 

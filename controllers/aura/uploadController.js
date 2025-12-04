@@ -37,3 +37,8 @@ exports.uploadMedia = [
     }
   }
 ];
+
+
+const uploadAvtar = ()=> {
+  
+}
