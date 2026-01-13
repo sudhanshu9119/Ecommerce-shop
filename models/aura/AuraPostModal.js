@@ -9,6 +9,8 @@ const AuraPostSchema = new mongoose.Schema({
   videoId: { type: mongoose.Schema.Types.ObjectId, required: true },
   thumbnailId: { type: mongoose.Schema.Types.ObjectId, required: true },
 
+  views: { type: Number, default: 0 },
+
   createdAt: { type: Date, default: Date.now },
 });
 

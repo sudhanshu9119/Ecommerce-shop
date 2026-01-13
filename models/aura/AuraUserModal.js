@@ -22,6 +22,15 @@ const authUserSchema = new mongoose.Schema({
     minlength: 6
   },
   
+  resetToken: {
+    type: String,
+    default: null,
+  },
+  resetTokenExpiration: {
+    type: Date,
+    default: null,
+  },
+
  avatar: {
   type: mongoose.Schema.Types.ObjectId,
   ref: "thumbnails.files", 
