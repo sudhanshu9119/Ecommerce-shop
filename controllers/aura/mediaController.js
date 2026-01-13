@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const AuraPost = require("../../models/aura/AuraPostModal");
 
 const getBucket = (bucket) =>
   new mongoose.mongo.GridFSBucket(mongoose.connection.db, { bucketName: bucket });
@@ -15,6 +16,17 @@ exports.streamVideo = async (req, res) => {
     if (!file) return res.sendStatus(404);
 
     res.set("Content-Type", file.contentType);
+
+    // Increment view count for the post linked to this video
+    try {
+      await AuraPost.findOneAndUpdate(
+        { videoId: file._id },
+        { $inc: { views: 1 } },
+        { new: false }
+      );
+    } catch (err) {
+      // non-blocking
+    }
 
     getBucket("videos")
       .openDownloadStream(file._id)
